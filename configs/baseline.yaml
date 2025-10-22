@@ -1,37 +1,82 @@
+# =========================
+# Baseline config (64×64)
+# =========================
+# This file controls how the triplet generator builds your dataset:
+# - Reads binary masks from `paths.input_root` (black object on white background).
+# - Produces triplets (initial, cand1, cand2) under `paths.output_root`.
+# - Uses CIELAB coordinates, CIEDE2000 (ΔE00) distances, linear sRGB for ops.
+
 paths:
+  # Source masks (your transformed, binary PNGs)
   input_root: "/Users/kate/Documents/retina-model/Image-set-1/transformed-images"
-  output_root: "/Users/kate/Documents/retina-model/image-set"   # triplets will go here
+  # Where to write the generated triplets and manifest CSV
+  output_root: "/Users/kate/Documents/retina-model/image-set"
 
 sampling:
+  # Reproducibility seed (affects all random choices: colours, tints, geometry)
   seed: 1234
+  # Number of trials (triplets) to create per split
   trials: { train: 128, val: 16, test: 16 }
 
 image:
-  size: [64, 64]                    # final image size (HxW)
+  # Final canvas size (Height, Width) in pixels
+  size: [64, 64]
 
 colour:
-  # INITIAL image background policy:
-  background_mode: desat        # options: desat | near_obj
+  # -----------------------------
+  # INITIAL image background policy
+  # -----------------------------
+  # Choose how to pick the INITIAL image’s background colour:
+  #   - 'desat'   : random from the desaturated Munsell subset (chroma < 4)
+  #   - 'near_obj': pick from a pool (desat or full) within a ΔE00 window of the object colour
+  background_mode: desat   # options: desat | near_obj
 
-  # If background_mode == near_obj, pick BG near the object's colour:
+  # Settings used ONLY when background_mode == 'near_obj'
   bg_near_obj:
-    pool: desat                 # options: desat | full
-    deltaE_min: 4               # keep figure/ground separation
-    deltaE_max: 10              # “within 10 ΔE00 of the object”
-    expand_if_empty: true       # expand the window if no candidates
-    expand_step: 2
-    expand_cap: 30
+    # Pool of candidates to search for the background colour:
+    #   'desat' → desaturated subset (muted backgrounds)
+    #   'full'  → any chromatic chip from the full set
+    pool: desat            # options: desat | full
+    # Keep figure/ground separation (lower bound) and closeness cap (upper bound)
+    deltaE_min: 4          # ≥ this ΔE00 away from the object (under D65)
+    deltaE_max: 10         # ≤ this ΔE00 from the object (under D65)
+    # If no candidates in [min, max], optionally expand the window upward
+    expand_if_empty: true
+    expand_step: 2         # grow the upper bound by this ΔE00 each retry
+    expand_cap: 30         # never expand beyond this ΔE00
 
-  # Candidates stay on fixed gray under D65 (unchanged):
-  candidates_background: fixed_gray
-  fixed_gray_Lab: [60, 0, 0]
-
+  # -----------------------------
+  # Global colour rules & lighting
+  # -----------------------------
+  # Minimum object vs background separation for INITIAL image (under D65, pre-lighting)
   deltaE_min: 4
+
+  # “White” reference in Lab for building the 16 chromatic tints (±a*, ±b* at radii 5/10/15/20).
+  # We keep this consistent with your prior pipeline; 80 is a common choice here.
   neutral_white_L0: 80
+
+  # Candidates are rendered under neutral D65 on a fixed gray background:
+  fixed_gray_Lab: [60, 0, 0]   # Lab (L*, a*, b*) for candidate backgrounds under D65
+
+  # Use the standard 16 chromatic tints (±a*, ±b* × {5, 10, 15, 20})
   tints: chromatic_16
 
+  # How to realize the "appearance-match" candidate (Candidate B):
+  #   - 'direct'          : use the exact Lab target (object appearance under tint) under D65
+  #   - 'nearest_munsell' : approximate with the nearest Munsell chip (logs residual ΔE)
+  appearance_match_mode: direct   # options: direct | nearest_munsell
+
 geometry:
-  resize_max_dim: [30, 45]          # object’s max dimension after scaling (px) for 64×64 canvas
+  # Object scaling: after scaling, the object’s largest dimension (height or width)
+  # will be chosen uniformly in this range (pixels), then centered on the canvas.
+  resize_max_dim: [30, 45]
+
+  # Rotation range in degrees (uniform sampling). Tighten for small canvases if needed.
   rotation_deg: [-60, 60]
+
+  # Translation distance range (pixels). A random direction is chosen uniformly on [0, 2π).
   translation_px: [3, 15]
+
+  # Safety margin (pixels): after rotation and translation, the object must remain
+  # at least this many pixels away from the image border; otherwise we resample.
   border_px: 5
