@@ -8,7 +8,7 @@
 
 paths:
   # Source masks (your transformed, binary PNGs)
-  input_root: "/Users/kate/Documents/retina-model/Image-set-1/transformed-images"
+  input_root: "/Users/kate/Documents/retina-model/Image-set-1/original bw images/apples"
   # Where to write the generated triplets and manifest CSV
   output_root: "/Users/kate/Documents/retina-model/image-set"
 
@@ -30,6 +30,10 @@ colour:
   #   - 'desat'   : random from the desaturated Munsell subset (chroma < 4)
   #   - 'near_obj': pick from a pool (desat or full) within a ΔE00 window of the object colour
   background_mode: desat   # options: desat | near_obj
+
+  global_exposure:
+    scope: candidates   # or: all
+    headroom: 0.98      # safety factor to avoid edge-clipping
 
   # Settings used ONLY when background_mode == 'near_obj'
   bg_near_obj:
