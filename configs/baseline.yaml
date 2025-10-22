@@ -1,0 +1,37 @@
+paths:
+  input_root: "/Users/kate/Documents/retina-model/Image-set-1/transformed-images"
+  output_root: "/Users/kate/Documents/retina-model/image-set"   # triplets will go here
+
+sampling:
+  seed: 1234
+  trials: { train: 128, val: 16, test: 16 }
+
+image:
+  size: [64, 64]                    # final image size (HxW)
+
+colour:
+  # INITIAL image background policy:
+  background_mode: desat        # options: desat | near_obj
+
+  # If background_mode == near_obj, pick BG near the object's colour:
+  bg_near_obj:
+    pool: desat                 # options: desat | full
+    deltaE_min: 4               # keep figure/ground separation
+    deltaE_max: 10              # “within 10 ΔE00 of the object”
+    expand_if_empty: true       # expand the window if no candidates
+    expand_step: 2
+    expand_cap: 30
+
+  # Candidates stay on fixed gray under D65 (unchanged):
+  candidates_background: fixed_gray
+  fixed_gray_Lab: [60, 0, 0]
+
+  deltaE_min: 4
+  neutral_white_L0: 80
+  tints: chromatic_16
+
+geometry:
+  resize_max_dim: [30, 45]          # object’s max dimension after scaling (px) for 64×64 canvas
+  rotation_deg: [-60, 60]
+  translation_px: [3, 15]
+  border_px: 5
