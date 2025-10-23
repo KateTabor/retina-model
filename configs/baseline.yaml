@@ -1,121 +1,79 @@
 # ===========================================
-# Baseline config — triplets with fixed gray BG
+# Baseline config — triplets with fixed Lab gray background
 # ===========================================
-# Key design:
-# - One dataset-wide background defined in Lab (under D65).
-# - Initial image: tint applies to the WHOLE image (object + background).
-# - Both choices are under D65 (no tint), so their BG equals the dataset gray.
-# - No exposure scaling anywhere; if any colour is out of gamut -> resample.
-# - Appearance-match candidate uses the object's post-tint Lab directly (under D65).
+# Design:
+# - One dataset-wide background in CIELAB under D65 (pre-tint gray).
+# - INITIAL image: tint applies to the WHOLE image (object + background).
+# - Both CANDIDATES are under D65 (no tint) → their BG equals the dataset gray.
+# - No exposure scaling anywhere; if out-of-gamut → resample (object/tint).
+# - Appearance-match uses 'direct' (exact object post-tint Lab under D65).
 
 paths:
-  # Source binary masks (black object on white background), already transformed/centered etc.
-  input_root: "/Users/kate/Documents/retina-model/Image-set-1/transformed-images"
-  # Output root for generated triplets and manifests
+  input_root:  "/Users/kate/Documents/retina-model/Image-set-1/original-bw-images/apples"
   output_root: "/Users/kate/Documents/retina-model/image-set"
 
 sampling:
-  # Reproducibility seed for all random draws (object chip, tint, geometry)
   seed: 1234
-  # Trials (triplets) per split
   trials: { train: 128, val: 16, test: 16 }
 
 image:
-  # Final canvas size (H, W) in pixels
-  size: [64, 64]
+  size: [64, 64]   # H, W
 
 colour:
-  # -------------------------
-  # Dataset-wide background
-  # -------------------------
-  # Fixed background in CIELAB under D65 (applies as the PRE-tint gray everywhere).
-  # For the initial image, this BG will then be tinted with the selected illuminant.
-  # For the two choices (D65), BG remains exactly this gray.
-  background_lab: [60, 0, 0]     # configurable (your default request)
+  # Dataset-wide background (PRE-tint) in CIELAB (D65)
+  background_lab: [60, 0, 0]
 
-  # -------------------------
-  # Object colour selection
-  # -------------------------
-  # Object is sampled from the full set of chromatic Munsell chips that the library validates (~1587).
-  # (We do not restrict chroma here; validation happens in code.)
-  object_pool: full               # future: 'desat' or custom lists if desired
+  # Object pool (validated chromatic Munsell chips via colour-science)
+  object_pool: full
 
-  # Optional minimum separation between object (pre-tint) and BG (pre-tint), in ΔE00 under D65.
-  # Set to 0 to disable; you previously liked 4 as a safe default.
+  # Optional minimum separation (under D65) between object-pre and BG-pre, in ΔE00.
   deltaE_min_obj_vs_bg_pre: 4
 
-  # -------------------------
-  # Illuminant / tint model
-  # -------------------------
-  # Neutral white L* level used to define tints (the “tinted white” is (L0, a*, b*)).
+  # Tints (illuminants) definition: tinted white at L* = L0
   neutral_white_L0: 80
+  tints: chromatic_16          # ±a*, ±b* at radii {5,10,15,20}
 
-  # The available tint set:
-  #   chromatic_16 = ±a*, ±b* at radii {5, 10, 15, 20} (L* = L0).
-  # One tint is drawn per initial image; it is applied to the whole initial image.
-  tints: chromatic_16
+  # Appearance-match realization (candidates under D65)
+  appearance_match_mode: direct   # 'direct' or 'nearest_munsell'
 
-  # Appearance-match realization:
-  #   direct           = use the exact target (object post-tint Lab) as the pre-tint Lab under D65.
-  #   nearest_munsell  = approximate with the nearest chip (kept for experiments).
-  appearance_match_mode: direct
-
-  # -------------------------
-  # Exposure / gamut policy
-  # -------------------------
-  # No exposure scaling anywhere to keep backgrounds numerically stable.
-  # If an object or tinted gray would clip (linear sRGB outside [0,1]) -> resample (see 'gamut').
+  # Exposure: no scaling anywhere (keep bytes stable)
   exposure:
-    mode: none         # future options: global (dataset-wide scale), per_image (not recommended here)
+    mode: none
 
 gamut:
-  # When any required colour (object pre, object post-tint, tinted gray, appearance-match) is out of gamut:
-  # try new tint/object combinations instead of scaling colours.
-  enforcement: resample          # fixed for this design
-
-  # Total attempts per trial before skipping it as “unrealisable.”
+  enforcement: resample            # fixed for this design
   max_attempts_per_trial: 100
 
-  # Tint resampling strategy:
-  # - start_random: first attempt is a random (axis, sign, radius)
-  # - then_shrink_radius: try smaller radii on the same axis/sign (e.g., 20→15→10→5)
-  # - then_flip_sign: try the opposite sign on the same axis
-  # - then_switch_axis: move from a* to b* (and vice versa)
+  # Tint trial order:
+  # If start_random=true → FULL SHUFFLE across all 16 tints (uniform mix of axes, signs, radii).
+  # If start_random=false → deterministic order using 'radii_desc' (largest to smallest by default).
   tint_resample:
     start_random: true
     radii_desc: [20, 15, 10, 5]
-    try_flip_sign: true
-    try_switch_axis: true
 
-  # If all tint attempts fail for a given object chip, draw a new object chip and retry.
+  # If all tints fail for a given object, try a new object chip
   resample_object_if_tint_fails: true
 
-  # If still no valid combination after 'max_attempts_per_trial', skip the trial and log it.
+  # If we still can't find a valid combo within max_attempts_per_trial, skip the trial
   skip_trial_if_fail: true
 
 report:
-  # Write a CSV manifest for the whole dataset (one row per trial).
   save_manifest_csv: true
   manifest_subdir: "manifests"
-
-  # Also write a compact per-trial JSON (easy to inspect a single trial’s numbers).
   save_per_trial_json: true
 
-  # Include both assignment-space and PNG-space numbers:
-  include_lab: true
-  include_xyz: true
-  include_rgb: true         # display sRGB (as saved), integers 0–255 unless 'rgb_as_float' is true
-  rgb_as_float: false       # set true to log 0..1 floats in addition to or instead of 0..255
+  # What to include in numeric logs
+  include_lab:  true
+  include_xyz:  true
+  include_rgb:  true
+  rgb_as_float: false     # keep PNG-like 0..255 integers by default
+
+  # Scientific copies alongside PNGs
+  save_tiff_xyz: true     # float32 XYZ TIFF per image
+  save_npz:      true     # NPZ with Lab/XYZ arrays + small metadata
 
 geometry:
-  # Object scaling: target largest dimension (H or W) is sampled uniformly from this range, then centered.
-  resize_max_dim: [30, 45]
-
-  # Random rotation in degrees
-  rotation_deg: [-60, 60]
-
-  # Random translation distance in pixels (direction is uniform on [0, 2π))
+  resize_max_dim: [30, 45]    # object’s max dimension after scaling (px)
+  rotation_deg:   [-60, 60]
   translation_px: [3, 15]
-
-  # Safety margin: after rotation + translation, the object must be at least this many pixels from every edge
-  border_px: 5
+  border_px:      5
