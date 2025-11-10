@@ -1,79 +1,37 @@
-# ===========================================
-# Baseline config — triplets with fixed Lab gray background
-# ===========================================
-# Design:
-# - One dataset-wide background in CIELAB under D65 (pre-tint gray).
-# - INITIAL image: tint applies to the WHOLE image (object + background).
-# - Both CANDIDATES are under D65 (no tint) → their BG equals the dataset gray.
-# - No exposure scaling anywhere; if out-of-gamut → resample (object/tint).
-# - Appearance-match uses 'direct' (exact object post-tint Lab under D65).
+# baseline.yaml — minimal, explicit, no legacy toggles
 
-paths:
-  input_root:  "/Users/kate/Documents/retina-model/Image-set-1/original-bw-images/apples"
-  output_root: "/Users/kate/Documents/retina-model/image-set"
+# --- I/O ---
+mask_dir: "/Users/kate/Documents/retina-model/Image-set-1/original-bw-images/apples"  # binary masks (object=black on white)
+out_dir:  "/Users/kate/Documents/retina-model/image-set"
 
-sampling:
-  seed: 1234
-  trials: { train: 128, val: 16, test: 16 }
+# --- Core setup ---
+seed: 1234
+splits: { train: 128, val: 16, test: 16 }
+img_size: [512, 512]  # H, W
 
-image:
-  size: [64, 64]   # H, W
+# --- Geometry ---
+object_max_dim_px: [360, 460]   # rescale object so its max dimension is in this range
+rotation_deg:       [-60, 60]
+translation_px:     [3, 15]
+border_px:          5
 
-colour:
-  # Dataset-wide background (PRE-tint) in CIELAB (D65)
-  background_lab: [60, 0, 0]
+# --- Colour (D65) ---
+background_lab: [60, 0, 0]
+neutral_white_L: 80
+tint_radii: [5, 10, 15, 20]     # builds 16 tints = ±a*, ±b* × radii
+deltaE_min_obj_vs_bg: 4         # optional min separation under D65
+appearance_match_mode: direct   # notebook assumes 'direct'
 
-  # Object pool (validated chromatic Munsell chips via colour-science)
-  object_pool: full
+# --- Sampling / gamut policy ---
+max_attempts: 100
+shuffle_tints: true
+resample_object: true
+skip_trial_if_fail: true
 
-  # Optional minimum separation (under D65) between object-pre and BG-pre, in ΔE00.
-  deltaE_min_obj_vs_bg_pre: 4
-
-  # Tints (illuminants) definition: tinted white at L* = L0
-  neutral_white_L0: 80
-  tints: chromatic_16          # ±a*, ±b* at radii {5,10,15,20}
-
-  # Appearance-match realization (candidates under D65)
-  appearance_match_mode: direct   # 'direct' or 'nearest_munsell'
-
-  # Exposure: no scaling anywhere (keep bytes stable)
-  exposure:
-    mode: none
-
-gamut:
-  enforcement: resample            # fixed for this design
-  max_attempts_per_trial: 100
-
-  # Tint trial order:
-  # If start_random=true → FULL SHUFFLE across all 16 tints (uniform mix of axes, signs, radii).
-  # If start_random=false → deterministic order using 'radii_desc' (largest to smallest by default).
-  tint_resample:
-    start_random: true
-    radii_desc: [20, 15, 10, 5]
-
-  # If all tints fail for a given object, try a new object chip
-  resample_object_if_tint_fails: true
-
-  # If we still can't find a valid combo within max_attempts_per_trial, skip the trial
-  skip_trial_if_fail: true
-
-report:
-  save_manifest_csv: true
-  manifest_subdir: "manifests"
-  save_per_trial_json: true
-
-  # What to include in numeric logs
-  include_lab:  true
-  include_xyz:  true
-  include_rgb:  true
-  rgb_as_float: false     # keep PNG-like 0..255 integers by default
-
-  # Scientific copies alongside PNGs
-  save_tiff_xyz: true     # float32 XYZ TIFF per image
-  save_npz:      true     # NPZ with Lab/XYZ arrays + small metadata
-
-geometry:
-  resize_max_dim: [30, 45]    # object’s max dimension after scaling (px)
-  rotation_deg:   [-60, 60]
-  translation_px: [3, 15]
-  border_px:      5
+# --- Output controls ---
+manifest_dir: "manifests"
+save_png: true
+save_scientific_copies: ["tiff_xyz", "npz", "mat"]  # choose any subset; [] for none
+# Optional: manifest extras (the notebook defaults to including these)
+include_lab_in_manifest: true
+include_rgb_in_manifest: true
