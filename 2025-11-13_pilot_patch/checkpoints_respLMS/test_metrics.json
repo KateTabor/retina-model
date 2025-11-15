@@ -1,0 +1,7 @@
+{
+  "loss": 0.017243470989431485,
+  "acc": 1.0,
+  "auc": null,
+  "baseline_l2_acc": 0.0,
+  "checkpoint": "/Users/kate/Documents/retina-model/2025-11-13_pilot_patch/checkpoints_respLMS/siamese_mlp_best.pt"
+}

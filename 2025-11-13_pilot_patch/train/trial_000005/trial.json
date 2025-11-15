@@ -1,0 +1,25 @@
+{
+  "split": "train",
+  "trial_id": 5,
+  "geometry": {
+    "chosen_max_dim_px": 434,
+    "rotation_deg": -23.70851354506341,
+    "dx": -1,
+    "dy": 8
+  },
+  "object": {
+    "munsell": "5P 9/2"
+  },
+  "illumination": {
+    "tint_lab": [
+      60.0,
+      -17.921150805278984,
+      0.6394435376634311
+    ],
+    "neutral_Lab": [
+      60.0,
+      0.0,
+      0.0
+    ]
+  }
+}

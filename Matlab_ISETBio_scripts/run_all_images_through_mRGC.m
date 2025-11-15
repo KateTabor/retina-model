@@ -30,8 +30,8 @@ S = load(lmFile,   'theMRGCmosaic');   mLM  = S.theMRGCmosaic;
 S = load(lmsFile,  'theMRGCmosaic_S'); mLMS = S.theMRGCmosaic_S;
 
 %% --- Gather ALL XYZ.tiff images from train/val/test
-rootDir = '/Users/kate/Documents/retina-model/image-set';
-splits  = {'train','val','test'};
+rootDir = '/Users/kate/Documents/retina-model/image-set'; 
+splits  = {'train','val','test'}; 
 imgList = {};
 for s = 1:numel(splits)
     dd = dir(fullfile(rootDir, splits{s}, '**', '*_XYZ.tif*'));

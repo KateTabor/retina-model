@@ -1,0 +1,14 @@
+{
+  "loss": 6.515473286299311e-06,
+  "acc": 1.0,
+  "auc": null,
+  "confusion@0.5": {
+    "TP": 50.0,
+    "FP": 0.0,
+    "TN": 0.0,
+    "FN": 0.0
+  },
+  "best_f1": null,
+  "best_f1_threshold": null,
+  "checkpoint": "/Users/kate/Documents/retina-model/2025-11-13_pilot_patch/checkpoints_respLMS/siamese_mlp_best.pt"
+}

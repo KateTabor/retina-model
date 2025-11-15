@@ -1,0 +1,25 @@
+{
+  "split": "test",
+  "trial_id": 39,
+  "geometry": {
+    "chosen_max_dim_px": 422,
+    "rotation_deg": -37.67049617401667,
+    "dx": -5,
+    "dy": 6
+  },
+  "object": {
+    "munsell": "5YR 5/8"
+  },
+  "illumination": {
+    "tint_lab": [
+      60.0,
+      -2.6628269279189354,
+      -16.952847577128924
+    ],
+    "neutral_Lab": [
+      60.0,
+      0.0,
+      0.0
+    ]
+  }
+}

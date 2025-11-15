@@ -1,0 +1,32 @@
+data:
+  response_key: "respLM"   
+  csv_path: "/Users/kate/Documents/retina-model/2025-11-13_pilot_patch/manifests/trials.csv"
+  run_dir:  "/Users/kate/Documents/retina-model/20251113_runAllImages"
+  batch_train: 16
+  batch_val: 32
+  num_workers: 0
+  randomize_candidates:
+    train: true
+    val:   false
+    test:  false
+
+model:
+  encoder_hidden: [128, 64, 32]
+  use_comparator: false
+  comparator_products: false
+
+optim:
+  lr: 1e-3
+  weight_decay: 1e-4
+  epochs: 100
+  early_stopping_patience: 8
+  grad_clip_norm: 1.0
+  scheduler: "cosine"
+
+train:
+  seed: 1234
+  device: "auto"
+
+logging:
+  ckpt_dir: "checkpoints_respLM"
+  run_id: "auto"
