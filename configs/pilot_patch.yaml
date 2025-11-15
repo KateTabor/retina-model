@@ -1,0 +1,114 @@
+# pilot_patch.yaml — pilot image-set for pipeline check (apple patch on neutral gray)
+
+# --- I/O ---
+mask_dir: "/Users/kate/Documents/retina-model/Imageset_originalbw/original-bw-images/apples"
+# The notebook will build out_dir = out_dir_template.format(date=today.strftime(date_format))
+out_dir_template: "/Users/kate/Documents/retina-model/{date}_pilot_patch"
+date_format: "%Y-%m-%d"
+manifest_dir: "manifests"
+
+# --- Core setup ---
+project: "pilot_patch"
+seed: 1234
+splits: { train: 200, val: 50, test: 50 }
+img_size: [512, 512]   # H, W
+
+# --- Geometry (baked in; no baseline.yaml needed) ---
+object_max_dim_px: [360, 460]
+rotation_deg:       [-60, 60]
+translation_px:     [3, 15]
+border_px:          5
+appearance_match_mode: "direct"
+
+# --- Background (neutral gray for ALL images) ---
+background_lab: [60.0, 0.0, 0.0]
+force_neutral_background: true
+
+# --- Illumination rules ---
+illumination:
+  initial_colored: true
+  candidates_white_only: true
+  white_name: "D65"
+  tint_lab_sampling:
+    mode: "uniform_ab"
+    L: 60.0
+    a_range: [-20.0, 20.0]
+    b_range: [-20.0, 20.0]
+
+# --- Candidate ordering (no randomization at write-time) ---
+candidates:
+  keep_fixed_order: true
+  write_names: ["candT", "candF"] 
+
+# --- Object colour selection ---
+object_colour:
+  source: "munsell"
+  allow_all_valid: true
+
+# --- Sampling / gamut policy ---
+max_attempts: 100
+shuffle_tints: true
+resample_object: true
+skip_trial_if_fail: true
+
+# --- Outputs ---
+output:
+  save_png: true
+  save_tiff_xyz: true
+  save_npz_colours: true
+  save_mat: false
+  write_trial_json: true
+
+# --- Trials manifest (CSV) ---
+manifest:
+  write_trials_csv: true
+  filename: "trials.csv"
+  columns:
+    - split
+    - trial_id
+    - skipped
+    - mask_file
+    - image_size
+    - chosen_max_dim_px
+    - rotation_deg
+    - dx
+    - dy
+    - obj_munsell
+    - resample_attempts_total
+    - resample_attempts_tint
+    - resample_attempts_object
+    - initial_path
+    - candT_path
+    - candF_path
+    - tint_lab
+    - bg_lab_pre
+    - obj_lab_pre
+    - obj_lab_post_init
+    - bg_lab_post_init
+    - obj_rgb_pre
+    - bg_rgb_pre
+    - tint_rgb
+    - obj_rgb_post_init
+    - bg_rgb_post_init
+    - candT_obj_rgb
+    - candF_obj_rgb
+    - cand_bg_rgb
+  dominant_wavelengths:
+    compute: true
+    reference_white: "D65"
+    fields:
+      - initial_obj_pre
+      - initial_obj_post
+      - candT_obj_pre
+      - candF_obj_pre
+      - background
+    on_failure: NaN
+
+# --- Mini chip set (separate folder) ---
+chips_mini_set:
+  enabled: true
+  count: 20
+  save_dir: "chips"
+  tiff_suffix: "_XYZ.tiff"
+  csv_name: "chips_manifest.csv"
+  fields_in_csv: ["image_size", "obj_munsell", "file_path", "wavelength"]

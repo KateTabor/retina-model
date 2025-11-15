@@ -1,0 +1,120 @@
+# mrgc_sim.yaml — Retina/ISETBio simulation + Siamese loader contract
+# Keep pilot_patch.yaml unchanged; this file is the model-facing config.
+
+project: "mrgc_sim"
+seed: 1234
+
+# --- Where to read the generated image set + manifest ---
+generator_input:
+  root_dir: "/Users/kate/Documents/retina-model"
+  dataset_dir_template: "{date}_pilot_patch"     # matches pilot generator naming (e.g., 2025-11-13_pilot_patch)
+  date_format: "%Y-%m-%d"
+  manifest_relpath: "manifests/trials.csv"
+
+  # Triplet naming written by the generator (no randomization at write time)
+  triplet_naming:
+    initial: "initial"
+    cand_true: "candT"
+    cand_false: "candF"
+    png_suffix: ".png"
+    xyz_suffix: "_XYZ.tiff"
+
+  # Minimal columns the loader/QC will expect in trials.csv
+  manifest_required_columns:
+    - split
+    - trial_id
+    - image_size
+    - chosen_max_dim_px
+    - rotation_deg
+    - dx
+    - dy
+    - obj_munsell
+    - initial_path
+    - candT_path
+    - candF_path
+    - tint_lab
+
+  # Pilot split sizes (for bookkeeping checks only)
+  splits: { train: 200, val: 50, test: 50 }
+
+# --- ISETBio optics (measured from your run) ---
+optics:
+  model: "human_wvf_thibos_avg"
+  pupil_diameter_mm: 3.0
+  wave_nm_range: [400, 700]          # inclusive; N=31 in code
+  compute_method: "opticspsf"
+  defocus_diopters: 0.00             # chosen at ~2° temporal (max Strehl below)
+  strehl_max: 0.533
+  strehl_wavelength_nm: 550
+  oi_name: "HumanWVF_3.0mmPupil"
+
+# --- Scene import from XYZ TIFFs ---
+scene:
+  input_format: "float32_XYZ_D65"
+  conversions: ["XYZ->linear_sRGB", "linear_sRGB->display_sRGB"]
+  clip_linear_rgb_to: [0.0, 1.0]
+  display: "LCD-Apple"
+  fov_deg: 2.0
+
+# --- mRGC mosaic (shared lattice for both arms) ---
+mosaic:
+  spec_name: "PLOSpaperTemporal2DegsMosaic"
+  subject: "PLOSpaperDefaultSubject"
+  center_deg: [-2.0, 0.0]
+  size_deg: [2.0, 2.0]
+  n_rgcs: 10371
+  indexing_identical_across_arms: true
+  prebaked_mosaic_file: "MRGCMosaic_RE_Ecc-2.0_0.0_Size2.0x2.0_Phi_1.00_Optics_Polans2015-2_maxStrehlRatio_srndModel_PackerDacey2002H1freeLowH1paramsNarrowVisualSTFparamTolerance_vSTF_1.0_1.0.mat"
+
+# --- Experimental arms (only surround composition differs) ---
+arms:
+  noS_surrounds:
+    description: "Default center/surround pooling; NO S-cone in surrounds"
+    enable_S_in_surrounds: false
+  withS_surrounds:
+    description: "Enable S-cone input in surrounds for ALL mRGCs; centers unchanged"
+    enable_S_in_surrounds: true
+
+# --- Where the mRGC responses (.mat vectors) are written/read ---
+responses_output:
+  # Matches run_all_images_through_mRGC_v2(): YYYYMMDD_runAllImages
+  out_root_template: "/Users/kate/Documents/retina-model/{date_compact}_runAllImages"
+  date_compact_format: "%Y%m%d"
+  file_contains_both_arms: true
+  mat_keys:
+    noS_key:   "respLM"     # default surrounds (no S in surround)
+    withS_key: "respLMS"    # S-cone surrounds enabled
+    positions_key: "rgc_positions"   # (N x 2) deg; saved by your script
+  vector_shape: [10371]      # 1-D per image (post-squeeze)
+  mat_dtype: "float64"       # cast to float32 on load
+
+# --- Loader & preprocessing contract for the Siamese model ---
+siamese_loader:
+  triplet_definition: "(initial, candT, candF); label=1 means candT is the true same-surface match"
+  randomize_candidates_at_load: false          # can enable later; fixed for pilot
+  per_condition_normalization: true            # z-score per-cell on TRAIN within each arm
+  normalization_stats_out: "manifests/normalize_stats_{arm}.json"
+  checks:
+    enforce_same_vector_length: true
+    forbid_nans_infs: true
+    confirm_indexing_identical_across_arms: true
+
+# --- Optional geometry export (enables future GNN/attention variants) ---
+mosaic_geometry_export:
+  export_positions_deg: true
+  positions_key: "rgcRFpositionsDegs"          # (N x 2) deg
+  neighbor_graph_strategy: "kNN_or_radius"     # build in Python and cache as edges
+
+# --- QC notes (descriptive; not used in computation) ---
+qc_notes:
+  center_cones_per_rgc_min_med_mean_max: [1, 1.0, 1.26, 2]
+  surround_cones_per_rgc_min_med_mean_max: [36, 61.0, 88.34, 286]
+  viz_thresholds:
+    center_min_weight: "sensitivityAtPointOfOverlap"
+    surround_rel_threshold: "1e-3 * center_peak (per cell)"
+
+# --- Provenance (for auditability) ---
+provenance:
+  generator_yaml: "configs/pilot_patch.yaml"
+  this_file: "configs/mrgc_sim.yaml"
+  created_by: "kate tabor"
