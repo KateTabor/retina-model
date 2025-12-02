@@ -18,10 +18,8 @@ function theMRGCmosaic_S = build2degONmRGCMosaic_enableSconeSurrounds_v2(varargi
 %
 % Returns:
 %   theMRGCmosaic_S  - modified mosaic with S-cone surrounds enabled
-
 % --- keep caller args safe (consistent with v2)
 userArgs = varargin;
-
 % --- init ISETBio/ISETCam (same style as v2)
 isInit = false;
 if exist('ieSessionGet','file') == 2
@@ -30,6 +28,8 @@ end
 if ~isInit && exist('ieInit','file') == 2
     try evalin('base','ieInit;'); catch, ieInit; end
 end
+% --- keep caller args safe (consistent with v2)
+userArgs = varargin;
 
 % --- parse inputs (mirrors v2 + S-cone extras)
 p = inputParser;

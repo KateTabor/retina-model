@@ -22,17 +22,17 @@ p.addParameter('saveFormat','-v7', @(s) any(strcmp(s,{'-v7','-v7.3'})));
 p.parse(varargin{:});
 opts = p.Results;
 
-% --- Init ISETBio/ISETCam (your exact block)
+% --- Init ISETBio/ISETCam 
 isInit = false;
 if exist('ieSessionGet','file') == 2
-    try, isInit = ieSessionGet('initialized'); catch, isInit = false; end
+    try isInit = ieSessionGet('initialized'); catch, isInit = false; end
 end
 if ~isInit && exist('ieInit','file') == 2
-    try, evalin('base','ieInit;'); catch, ieInit; end
+    try evalin('base','ieInit;'); catch, ieInit; end
 end
 
 % --- Start from human WVF optics OI, then modify WVF as needed
-oi  = oiCreate('wvf human');           % <-- correct way to get human/Thibos WVF
+oi  = oiCreate('wvf human');           
 wvf = oiGet(oi,'optics wvf');          % pull the WVF out
 
 % Optional custom wavelength sampling (set BEFORE compute)
@@ -59,7 +59,7 @@ oiName = sprintf('HumanWVF_%0.1fmmPupil%s', opts.pupilDiameterMM, waveTag);
 oi = oiSet(oi,'name',oiName);
 
 meta = struct();
-meta.createdOn       = datestr(now);
+meta.createdOn       = datetime('now');
 meta.pupilDiameterMM = opts.pupilDiameterMM;
 meta.wave_nm         = w(:);
 meta.notes           = 'Scene-agnostic human WVF optics; FOV comes from scene.';
