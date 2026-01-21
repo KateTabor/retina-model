@@ -1,0 +1,12 @@
+{
+    "keys_order": [
+        "l_on",
+        "l_off",
+        "m_on",
+        "m_off",
+        "l_h2_on",
+        "m_h2_on",
+        "l_h2_off",
+        "m_h2_off"
+    ]
+}

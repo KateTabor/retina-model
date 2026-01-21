@@ -1,0 +1,2 @@
+stim_id,hue,intensity,kind,bg_r,bg_g,bg_b,center_r,center_g,center_b,true_hue,pred_hue
+40,blue,0.05,flat,0.5,0.5,0.5,0.0,0.0,0.05,blue,white
