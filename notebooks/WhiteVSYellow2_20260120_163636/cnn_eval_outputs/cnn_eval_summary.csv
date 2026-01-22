@@ -1,0 +1,4 @@
+run,n_channels,epochs,best_val_acc,test_acc,checkpoint
+all8,8,10,0.41509433962264153,0.4339622641509434,best_all8.pt
+classic4,4,10,0.2830188679245283,0.2830188679245283,best_classic4.pt
+h2_4,4,10,1.0,1.0,best_h2_4.pt
