@@ -1,0 +1,10 @@
+run,split_seed,trial,init_seed,n_channels,epochs,best_val_acc,test_acc,checkpoint
+all8,0,0,0,8,10,0.9473684210526315,1.0,best_all8_split0_trial0_init0.pt
+all8,1,2,1002,8,10,1.0,0.9736842105263158,best_all8_split1_trial2_init1002.pt
+all8,2,3,2003,8,10,0.9736842105263158,1.0,best_all8_split2_trial3_init2003.pt
+classic4,0,1,1,4,10,0.8947368421052632,0.8157894736842105,best_classic4_split0_trial1_init1.pt
+classic4,1,3,1003,4,10,0.8421052631578947,0.7105263157894737,best_classic4_split1_trial3_init1003.pt
+classic4,2,0,2000,4,10,0.7368421052631579,0.868421052631579,best_classic4_split2_trial0_init2000.pt
+h2_4,0,0,0,4,10,1.0,1.0,best_h2_4_split0_trial0_init0.pt
+h2_4,1,4,1004,4,10,1.0,1.0,best_h2_4_split1_trial4_init1004.pt
+h2_4,2,3,2003,4,10,1.0,1.0,best_h2_4_split2_trial3_init2003.pt

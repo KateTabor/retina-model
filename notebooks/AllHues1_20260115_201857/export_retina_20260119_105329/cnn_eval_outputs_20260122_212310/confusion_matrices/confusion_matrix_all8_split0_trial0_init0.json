@@ -1,0 +1,50 @@
+{
+  "run": "all8",
+  "split_seed": 0,
+  "trial": 0,
+  "init_seed": 0,
+  "class_names": [
+    "blue",
+    "green",
+    "red",
+    "white",
+    "yellow"
+  ],
+  "confusion_matrix": [
+    [
+      7,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      8,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      7,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      8,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      8
+    ]
+  ]
+}

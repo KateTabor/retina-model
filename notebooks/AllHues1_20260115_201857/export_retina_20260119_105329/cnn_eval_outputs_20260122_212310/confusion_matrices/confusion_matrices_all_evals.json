@@ -1,0 +1,452 @@
+{
+  "all8_split0_trial0_init0": {
+    "run": "all8",
+    "split_seed": 0,
+    "trial": 0,
+    "init_seed": 0,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        8
+      ]
+    ]
+  },
+  "h2_4_split0_trial0_init0": {
+    "run": "h2_4",
+    "split_seed": 0,
+    "trial": 0,
+    "init_seed": 0,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        8
+      ]
+    ]
+  },
+  "h2_4_split2_trial3_init2003": {
+    "run": "h2_4",
+    "split_seed": 2,
+    "trial": 3,
+    "init_seed": 2003,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ]
+  },
+  "h2_4_split1_trial4_init1004": {
+    "run": "h2_4",
+    "split_seed": 1,
+    "trial": 4,
+    "init_seed": 1004,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        8
+      ]
+    ]
+  },
+  "all8_split2_trial3_init2003": {
+    "run": "all8",
+    "split_seed": 2,
+    "trial": 3,
+    "init_seed": 2003,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ]
+  },
+  "all8_split1_trial2_init1002": {
+    "run": "all8",
+    "split_seed": 1,
+    "trial": 2,
+    "init_seed": 1002,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        7
+      ]
+    ]
+  },
+  "classic4_split2_trial0_init2000": {
+    "run": "classic4",
+    "split_seed": 2,
+    "trial": 0,
+    "init_seed": 2000,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        5,
+        0,
+        2
+      ]
+    ]
+  },
+  "classic4_split0_trial1_init1": {
+    "run": "classic4",
+    "split_seed": 0,
+    "trial": 1,
+    "init_seed": 1,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        6,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        1,
+        5
+      ]
+    ]
+  },
+  "classic4_split1_trial3_init1003": {
+    "run": "classic4",
+    "split_seed": 1,
+    "trial": 3,
+    "init_seed": 1003,
+    "class_names": [
+      "blue",
+      "green",
+      "red",
+      "white",
+      "yellow"
+    ],
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        5,
+        0,
+        2
+      ],
+      [
+        4,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        1,
+        4
+      ]
+    ]
+  }
+}

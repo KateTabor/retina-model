@@ -1,0 +1,50 @@
+{
+  "run": "classic4",
+  "split_seed": 2,
+  "trial": 0,
+  "init_seed": 2000,
+  "class_names": [
+    "blue",
+    "green",
+    "red",
+    "white",
+    "yellow"
+  ],
+  "confusion_matrix": [
+    [
+      8,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      8,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      7,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      8,
+      0
+    ],
+    [
+      0,
+      0,
+      5,
+      0,
+      2
+    ]
+  ]
+}
